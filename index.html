@@ -25,8 +25,8 @@ document.querySelectorAll('.card').forEach(card=>{
 if(!items.length)return alert('Please enter a quantity for at least one size.');
 for(const it of items)if(!it.color)return alert('Please select a color for every item being ordered.');
 
-if(!SUBMIT_ENDPOINT || SUBMIT_ENDPOINT.includes('https://script.google.com/macros/s/AKfycbzijiLdZn_ktb5IkP7FT-RNpDxrkevvEL0cuTcU1I-3GD4LQQBP7p_e2uVoYvXu5dUK/exec')){
-  alert('Add your Google Apps Script Web App URL to SUBMIT_ENDPOINT in index.html first.');
+if(!SUBMIT_ENDPOINT){
+  alert('Google Apps Script Web App URL is missing.');
   return;
 }
 
