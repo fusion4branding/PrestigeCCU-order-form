@@ -6,6 +6,51 @@
 const SUBMIT_ENDPOINT="https://script.google.com/macros/s/AKfycbzijiLdZn_ktb5IkP7FT-RNpDxrkevvEL0cuTcU1I-3GD4LQQBP7p_e2uVoYvXu5dUK/exec"; const money=n=>'$'+Number(n||0).toFixed(2);
 function calc(){let sub=0,qtot=0;document.querySelectorAll('.card').forEach(card=>{let it=0;card.querySelectorAll('.size-row').forEach(r=>{const q=Number(r.querySelector('.qty').value||0),p=Number(r.dataset.price);it+=q*p;qtot+=q});card.querySelector('.itemtotal strong').textContent=money(it);sub+=it});const tax=Number(taxEl.value||0),credit=Number(creditEl.value||0),grand=Math.max(0,sub+tax-credit);subtotalEl.textContent=money(sub);totalEl.textContent=money(grand);tqty.textContent=qtot;balance.value=grand.toFixed(2)}
 const taxEl=document.getElementById('tax'),creditEl=document.getElementById('credit'),subtotalEl=document.getElementById('subtotal'),totalEl=document.getElementById('total');document.querySelectorAll('.qty,#tax,#credit').forEach(x=>x.addEventListener('input',calc));
+
+// Change the displayed front image when a product color is selected.
+// Color images should be stored in /assets using:
+//   PRODUCT-CODE-Color-Name.jpg
+// Example: assets/NKDC2105-Women-University-Red.jpg
+function colorImageName(value){
+  return String(value || '')
+    .trim()
+    .replace(/&/g,'and')
+    .replace(/[^A-Za-z0-9]+/g,'-')
+    .replace(/^-+|-+$/g,'');
+}
+
+document.querySelectorAll('.card').forEach(card=>{
+  const select=card.querySelector('.color');
+  const img=card.querySelector('.media img');
+  if(!select || !img) return;
+
+  // Keep the current/default product image so "Select color" restores it.
+  const defaultSrc=img.getAttribute('src');
+
+  select.addEventListener('change',()=>{
+    const color=select.value;
+    if(!color){
+      img.src=defaultSrc;
+      return;
+    }
+
+    const code=card.dataset.code;
+    const requestedSrc=`assets/${code}-${colorImageName(color)}.jpg`;
+
+    // If a color image is missing, keep the normal/default product image.
+    const tester=new Image();
+    tester.onload=()=>{
+      img.src=requestedSrc;
+      img.alt=`${code} - ${color}`;
+    };
+    tester.onerror=()=>{
+      img.src=defaultSrc;
+      img.alt=`${code} product image`;
+    };
+    tester.src=requestedSrc;
+  });
+});
+
 document.getElementById('form').addEventListener('submit',e=>{
 e.preventDefault();calc();
 
