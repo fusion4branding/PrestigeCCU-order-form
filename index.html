@@ -24,28 +24,41 @@ document.querySelectorAll('.card').forEach(card=>{
   const img=card.querySelector('.media img');
   if(!select || !img) return;
 
-  // Keep the current/default product image so "Select color" restores it.
-  const defaultSrc=img.getAttribute('src');
+  const code=card.dataset.code;
+  const firstColorOption=Array.from(select.options).find(option=>option.value);
+  const firstColor=firstColorOption ? firstColorOption.value : '';
+  const firstColorSrc=firstColor
+    ? `assets/${code}-${colorImageName(firstColor)}.jpeg`
+    : img.getAttribute('src');
+
+  // Show the first available color image by default while the dropdown
+  // itself remains on "Select color".
+  if(firstColor){
+    img.src=firstColorSrc;
+    img.alt=`${code} - ${firstColor}`;
+  }
 
   select.addEventListener('change',()=>{
     const color=select.value;
+
+    // Returning to "Select color" displays the first color image again.
     if(!color){
-      img.src=defaultSrc;
+      img.src=firstColorSrc;
+      img.alt=firstColor ? `${code} - ${firstColor}` : `${code} product image`;
       return;
     }
 
-    const code=card.dataset.code;
     const requestedSrc=`assets/${code}-${colorImageName(color)}.jpeg`;
 
-    // If a color image is missing, keep the normal/default product image.
+    // If a selected color image is missing, fall back to the first color image.
     const tester=new Image();
     tester.onload=()=>{
       img.src=requestedSrc;
       img.alt=`${code} - ${color}`;
     };
     tester.onerror=()=>{
-      img.src=defaultSrc;
-      img.alt=`${code} product image`;
+      img.src=firstColorSrc;
+      img.alt=firstColor ? `${code} - ${firstColor}` : `${code} product image`;
     };
     tester.src=requestedSrc;
   });
