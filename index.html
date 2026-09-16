@@ -9,8 +9,8 @@ const taxEl=document.getElementById('tax'),creditEl=document.getElementById('cre
 
 // Change the displayed front image when a product color is selected.
 // Color images should be stored in /assets using:
-//   PRODUCT-CODE-Color-Name.jpg
-// Example: assets/NKDC2105-Women-University-Red.jpg
+//   PRODUCT-CODE-Color-Name.jpeg
+// Example: assets/NKDC2105-Women-University-Red.jpeg
 function colorImageName(value){
   return String(value || '')
     .trim()
@@ -35,7 +35,7 @@ document.querySelectorAll('.card').forEach(card=>{
     }
 
     const code=card.dataset.code;
-    const requestedSrc=`assets/${code}-${colorImageName(color)}.jpg`;
+    const requestedSrc=`assets/${code}-${colorImageName(color)}.jpeg`;
 
     // If a color image is missing, keep the normal/default product image.
     const tester=new Image();
